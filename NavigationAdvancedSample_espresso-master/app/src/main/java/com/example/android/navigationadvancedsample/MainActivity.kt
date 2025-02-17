@@ -1,56 +1,46 @@
-package com.example.android.navigationadvancedsample;
+package com.example.android.navigationadvancedsample
 
-import static androidx.navigation.ui.ActivityKt.setupActionBarWithNavController;
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
-import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.ActivityKt;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.BottomNavigationViewKt;
-import androidx.navigation.ui.NavControllerKt;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import kotlin.collections.SetsKt;
-
-public class MainActivity extends AppCompatActivity {
-
-    private NavController navController;
-    private AppBarConfiguration appBarConfiguration;
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(
-                R.id.nav_host_container
-        );
-        navController = navHostFragment.getNavController();
+class MainActivity : AppCompatActivity() {
+    private var navController: NavController? = null
+    private var appBarConfiguration: AppBarConfiguration? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        val navHostFragment = supportFragmentManager.findFragmentById(
+            R.id.nav_host_container
+        ) as NavHostFragment?
+        navController = navHostFragment!!.navController
 
         // Setup the bottom navigation view with navController
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
-        BottomNavigationViewKt.setupWithNavController(bottomNavigationView, navController);
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_nav)
+        bottomNavigationView.setupWithNavController(navController!!)
 
         // Setup the ActionBar with navController and 3 top level destinations
-        appBarConfiguration = new AppBarConfiguration.Builder(SetsKt.setOf(R.id.titleScreen, R.id.leaderboard,  R.id.register))
-                                                    .build();
-
-        ActivityKt.setupActionBarWithNavController(this, this.navController, this.appBarConfiguration);
-
+        appBarConfiguration = AppBarConfiguration.Builder(
+            setOf<Int>(
+                R.id.titleScreen,
+                R.id.leaderboard,
+                R.id.register
+            )
+        )
+            .build()
+        this.setupActionBarWithNavController(navController!!, appBarConfiguration!!)
     }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        return NavControllerKt.navigateUp(this.navController, this.appBarConfiguration);
+    override fun onSupportNavigateUp(): Boolean {
+        return navController!!.navigateUp(appBarConfiguration!!)
     }
 
-
-    public String getMyString(){
-        return "MyString";
-    }
+    val myString: String
+        get() = "MyString"
 }
